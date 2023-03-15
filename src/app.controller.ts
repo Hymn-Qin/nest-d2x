@@ -7,7 +7,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 export class AppController {
   private static readonly TAG = AppController.name;
 
-  constructor(private readonly appService: AppService) { }
+  constructor(private readonly appService: AppService) {}
 
   // 通过ApiParam装饰器，来描述接口需要哪些参数
   @ApiParam({ name: 'name', type: String, description: '姓名' })
