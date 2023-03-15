@@ -1,0 +1,18 @@
+{
+    "sourceFile": ".eslintrc.js",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 0,
+            "patches": [
+                {
+                    "date": 1678872886214,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                }
+            ],
+            "date": 1678872886214,
+            "name": "Commit-0",
+            "content": "module.exports = {\n  parser: '@typescript-eslint/parser',\n  parserOptions: {\n    project: 'tsconfig.json',\n    tsconfigRootDir: __dirname,\n    sourceType: 'module',\n  },\n  plugins: ['@typescript-eslint/eslint-plugin'],\n  extends: [\n    'plugin:@typescript-eslint/recommended',\n    'plugin:prettier/recommended',\n  ],\n  root: true,\n  env: {\n    node: true,\n    jest: true,\n  },\n  ignorePatterns: ['.eslintrc.js'],\n  rules: {\n    '@typescript-eslint/interface-name-prefix': 'off',\n    '@typescript-eslint/explicit-function-return-type': 'off',\n    '@typescript-eslint/explicit-module-boundary-types': 'off',\n    '@typescript-eslint/no-explicit-any': 'off',\n    '@typescript-eslint/ban-ts-comment': 'off',\n    '@typescript-eslint/no-var-requires': 0,\n  },\n};\n"
+        }
+    ]
+}

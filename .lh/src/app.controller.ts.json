@@ -1,0 +1,46 @@
+{
+    "sourceFile": "src/app.controller.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 7,
+            "patches": [
+                {
+                    "date": 1678872017275,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1678872102750,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,9 @@\n import { Controller, Get, Req } from '@nestjs/common';\n import { AppService } from './app.service';\n+import { FastifyRequest } from 'fastify';\n \n+\n @Controller()\n export class AppController {\n   constructor(private readonly appService: AppService) { }\n \n"
+                },
+                {
+                    "date": 1678872131911,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,12 +1,10 @@\n import { Controller, Get, Req } from '@nestjs/common';\n import { AppService } from './app.service';\n import { FastifyRequest } from 'fastify';\n \n-\n @Controller()\n export class AppController {\n-  constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n     return this.appService.getHello();\n"
+                },
+                {
+                    "date": 1678872173936,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,10 +3,12 @@\n import { FastifyRequest } from 'fastify';\n \n @Controller()\n export class AppController {\n+  constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n+    console.log(request.cookies);\n     return this.appService.getHello();\n   }\n }\n"
+                },
+                {
+                    "date": 1678875052027,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,14 +1,16 @@\n-import { Controller, Get, Req } from '@nestjs/common';\n+import { Controller, Get, Logger, Req } from '@nestjs/common';\n import { AppService } from './app.service';\n import { FastifyRequest } from 'fastify';\n \n @Controller()\n export class AppController {\n+  private readonly static TAG = AppController.name;\n   constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n     console.log(request.cookies);\n+    Logger.log(msg, AppController.TAG);\n     return this.appService.getHello();\n   }\n }\n"
+                },
+                {
+                    "date": 1678875058860,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -8,9 +8,8 @@\n   constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n-    console.log(request.cookies);\n-    Logger.log(msg, AppController.TAG);\n+    Logger.log(request.cookies, AppController.TAG);\n     return this.appService.getHello();\n   }\n }\n"
+                },
+                {
+                    "date": 1678875064103,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,9 @@\n import { FastifyRequest } from 'fastify';\n \n @Controller()\n export class AppController {\n-  private readonly static TAG = AppController.name;\n+  private static readonly TAG = AppController.name;\n   constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n"
+                },
+                {
+                    "date": 1678875105393,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -4,8 +4,9 @@\n \n @Controller()\n export class AppController {\n   private static readonly TAG = AppController.name;\n+  \n   constructor(private readonly appService: AppService) { }\n \n   @Get()\n   getHello(@Req() request: FastifyRequest): string {\n"
+                }
+            ],
+            "date": 1678872017275,
+            "name": "Commit-0",
+            "content": "import { Controller, Get, Req } from '@nestjs/common';\nimport { AppService } from './app.service';\n\n@Controller()\nexport class AppController {\n  constructor(private readonly appService: AppService) { }\n\n  @Get()\n  getHello(@Req() request: FastifyRequest): string {\n    return this.appService.getHello();\n  }\n}\n"
+        }
+    ]
+}

@@ -1,0 +1,86 @@
+{
+    "sourceFile": "src/interceptor/transform.interceptor.ts",
+    "activeCommit": 0,
+    "commits": [
+        {
+            "activePatchIndex": 17,
+            "patches": [
+                {
+                    "date": 1678872453377,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n"
+                },
+                {
+                    "date": 1678872556587,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,11 @@\n-import { NestInterceptor } from \"@nestjs/common\";\n+import { CallHandler, ExecutionContext, NestInterceptor } from \"@nestjs/common\";\n+import { Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n+    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n+        const req = context.getArgByIndex(1).request,\n+            d = new Date();\n+    }\n \n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1678872561979,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,9 +2,9 @@\n import { Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n-    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n+    intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n     }\n \n"
+                },
+                {
+                    "date": 1678872623383,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,10 +2,14 @@\n import { Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n-    intercept(context: ExecutionContext, next: CallHandler): Observable<any> | Promise<Observable<any>> {\n+    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n+\n+        d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n+\n+        return next.handle().pipe();\n     }\n \n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1678872665367,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,6 +1,6 @@\n import { CallHandler, ExecutionContext, NestInterceptor } from \"@nestjs/common\";\n-import { Observable } from \"rxjs\";\n+import { map, Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n@@ -8,8 +8,12 @@\n             d = new Date();\n \n         d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n \n-        return next.handle().pipe();\n+        return next.handle().pipe(\n+            map((data) => {\n+\n+            }),\n+        );\n     }\n \n }\n\\ No newline at end of file\n"
+                },
+                {
+                    "date": 1678872843452,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -10,9 +10,19 @@\n         d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n \n         return next.handle().pipe(\n             map((data) => {\n-\n+                if (req) {\n+                    const msg = [\n+                        `Time: ${d.toISOString()} | `,\n+                        `RequestUrl: ${req.url} | `,\n+                        `Method: ${req.method} | `,\n+                        `HostName: ${req.hostname} | `,\n+                        `Headers: ${req.Headers} | `,\n+                        `ResponseData: ${data} | `,\n+                    ].join('');\n+                }\n+                return data;\n             }),\n         );\n     }\n \n"
+                },
+                {
+                    "date": 1678873001815,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,8 +19,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n+                    \n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678873182685,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -19,9 +19,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    \n+                    console.log(msg);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678873426983,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,9 +1,12 @@\n-import { CallHandler, ExecutionContext, NestInterceptor } from \"@nestjs/common\";\n+import { CallHandler, ExecutionContext, Logger, NestInterceptor } from \"@nestjs/common\";\n import { map, Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n+\n+    private readonly logger = new Logger(TransformInterceptor.name);\n+\n     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n \n"
+                },
+                {
+                    "date": 1678873435131,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,9 +22,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    console.log(msg);\n+                    logger.log(msg);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678874682727,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -22,9 +22,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    logger.log(msg);\n+                    this.logger.log(msg);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678874775504,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,9 +3,8 @@\n \n \n export class TransformInterceptor implements NestInterceptor {\n \n-    private readonly logger = new Logger(TransformInterceptor.name);\n \n     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n@@ -22,9 +21,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    this.logger.log(msg);\n+                    Logger.log(msg);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678874884242,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -21,9 +21,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    Logger.log(msg);\n+                    Logger.log(msg, TransformInterceptor.name);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678874941103,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -3,8 +3,9 @@\n \n \n export class TransformInterceptor implements NestInterceptor {\n \n+    private readonly static TAG = TransformInterceptor.name;\n \n     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n@@ -21,9 +22,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    Logger.log(msg, TransformInterceptor.name);\n+                    Logger.log(msg, TAG);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678874959819,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -2,11 +2,10 @@\n import { map, Observable } from \"rxjs\";\n \n \n export class TransformInterceptor implements NestInterceptor {\n+  private static readonly TAG = TransformInterceptor.name;\n \n-    private readonly static TAG = TransformInterceptor.name;\n-\n     intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n         const req = context.getArgByIndex(1).request,\n             d = new Date();\n \n@@ -22,9 +21,9 @@\n                         `HostName: ${req.hostname} | `,\n                         `Headers: ${req.Headers} | `,\n                         `ResponseData: ${data} | `,\n                     ].join('');\n-                    Logger.log(msg, TAG);\n+                    Logger.log(msg, TransformInterceptor.TAG);\n                 }\n                 return data;\n             }),\n         );\n"
+                },
+                {
+                    "date": 1678880416567,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,32 +1,38 @@\n-import { CallHandler, ExecutionContext, Logger, NestInterceptor } from \"@nestjs/common\";\n-import { map, Observable } from \"rxjs\";\n+import {\n+  CallHandler,\n+  ExecutionContext,\n+  Logger,\n+  NestInterceptor,\n+} from '@nestjs/common';\n+import { map, Observable } from 'rxjs';\n \n-\n export class TransformInterceptor implements NestInterceptor {\n   private static readonly TAG = TransformInterceptor.name;\n \n-    intercept(context: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {\n-        const req = context.getArgByIndex(1).request,\n-            d = new Date();\n+  intercept(\n+    context: ExecutionContext,\n+    next: CallHandler<any>,\n+  ): Observable<any> | Promise<Observable<any>> {\n+    const req = context.getArgByIndex(1).request,\n+      d = new Date();\n \n-        d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n+    d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n \n-        return next.handle().pipe(\n-            map((data) => {\n-                if (req) {\n-                    const msg = [\n-                        `Time: ${d.toISOString()} | `,\n\\ No newline at end of file\n-                        `RequestUrl: ${req.url} | `,\n-                        `Method: ${req.method} | `,\n-                        `HostName: ${req.hostname} | `,\n-                        `Headers: ${req.Headers} | `,\n-                        `ResponseData: ${data} | `,\n-                    ].join('');\n-                    Logger.log(msg, TransformInterceptor.TAG);\n-                }\n-                return data;\n-            }),\n-        );\n-    }\n-\n-}\n+    return next.handle().pipe(\n+      map((data) => {\n+        if (req) {\n+          const msg = [\n+            `Time: ${d.toISOString()} | `,\n+            `RequestUrl: ${req.url} | `,\n+            `Method: ${req.method} | `,\n+            `HostName: ${req.hostname} | `,\n+            `Headers: ${req.Headers} | `,\n+            `ResponseData: ${data} | `,\n+          ].join('');\n+          Logger.log(msg, TransformInterceptor.TAG);\n+        }\n+        return data;\n+      }),\n+    );\n+  }\n+}\n"
+                },
+                {
+                    "date": 1678880558869,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,38 +1,39 @@\n import {\n-  CallHandler,\n-  ExecutionContext,\n-  Logger,\n-  NestInterceptor,\n+    CallHandler,\n+    ExecutionContext,\n+    Logger,\n+    NestInterceptor,\n } from '@nestjs/common';\n import { map, Observable } from 'rxjs';\n \n+@Injectable()\n export class TransformInterceptor implements NestInterceptor {\n-  private static readonly TAG = TransformInterceptor.name;\n+    private static readonly TAG = TransformInterceptor.name;\n \n-  intercept(\n-    context: ExecutionContext,\n-    next: CallHandler<any>,\n-  ): Observable<any> | Promise<Observable<any>> {\n-    const req = context.getArgByIndex(1).request,\n-      d = new Date();\n+    intercept(\n+        context: ExecutionContext,\n+        next: CallHandler<any>,\n+    ): Observable<any> | Promise<Observable<any>> {\n+        const req = context.getArgByIndex(1).request,\n+            d = new Date();\n \n-    d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n+        d.setHours(d.getHours(), d.getMinutes() - d.getTimezoneOffset());\n \n-    return next.handle().pipe(\n-      map((data) => {\n-        if (req) {\n-          const msg = [\n-            `Time: ${d.toISOString()} | `,\n-            `RequestUrl: ${req.url} | `,\n-            `Method: ${req.method} | `,\n-            `HostName: ${req.hostname} | `,\n-            `Headers: ${req.Headers} | `,\n-            `ResponseData: ${data} | `,\n-          ].join('');\n-          Logger.log(msg, TransformInterceptor.TAG);\n-        }\n-        return data;\n-      }),\n-    );\n-  }\n+        return next.handle().pipe(\n+            map((data) => {\n+                if (req) {\n+                    const msg = [\n+                        `Time: ${d.toISOString()} | `,\n+                        `RequestUrl: ${req.url} | `,\n+                        `Method: ${req.method} | `,\n+                        `HostName: ${req.hostname} | `,\n+                        `Headers: ${req.Headers} | `,\n+                        `ResponseData: ${data} | `,\n+                    ].join('');\n+                    Logger.log(msg, TransformInterceptor.TAG);\n+                }\n+                return data;\n+            }),\n+        );\n+    }\n }\n"
+                },
+                {
+                    "date": 1678880565963,
+                    "content": "Index: \n===================================================================\n--- \n+++ \n@@ -1,7 +1,8 @@\n import {\n     CallHandler,\n     ExecutionContext,\n+    Injectable,\n     Logger,\n     NestInterceptor,\n } from '@nestjs/common';\n import { map, Observable } from 'rxjs';\n"
+                }
+            ],
+            "date": 1678872453377,
+            "name": "Commit-0",
+            "content": "import { NestInterceptor } from \"@nestjs/common\";\n\n\nexport class TransformInterceptor implements NestInterceptor {\n\n}"
+        }
+    ]
+}
