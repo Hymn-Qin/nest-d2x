@@ -1,10 +1,13 @@
 import {
+  Body,
   Controller,
   Get,
   HttpException,
   HttpStatus,
   Logger,
   Param,
+  ParseIntPipe,
+  Patch,
   Req,
 } from '@nestjs/common';
 import { UserService } from './user.service';
@@ -13,6 +16,7 @@ import { ApiParam, ApiTags } from '@nestjs/swagger';
 import { HttpService } from '@nestjs/axios';
 import { IResponse } from '@interfaces/response.interface';
 import { lastValueFrom } from 'rxjs';
+import { UserDto } from './dto/user.dto';
 // @ApiTags('node')
 @Controller('user')
 export class UserController {
@@ -24,12 +28,11 @@ export class UserController {
   ) {}
 
   // 通过ApiParam装饰器，来描述接口需要哪些参数
-  @ApiParam({ name: 'name', type: String, description: '姓名' })
-  @ApiParam({ name: 'gender', type: String, description: '性别' })
+  @ApiParam({ name: 'id', type: Number, description: '用户id' })
   @Get(':id')
   async getProfile(
     @Req() request: FastifyRequest,
-    @Param('id') id: string,
+    @Param('id', ParseIntPipe) id: number, // ParseIntPipe 动态转换 参数类型，将 id string转为 int
   ): Promise<IResponse<object>> {
     Logger.log(request.cookies, UserController.TAG);
     const data = await this.userService.findById(id);
@@ -45,5 +48,10 @@ export class UserController {
     } else {
       throw new HttpException('error', HttpStatus.CONFLICT);
     }
+  }
+
+  @Patch(':id')
+  update(@Param('id', ParseIntPipe) id: number, @Body() userProfile: UserDto) {
+    return this.userService.update(id, userProfile);
   }
 }
