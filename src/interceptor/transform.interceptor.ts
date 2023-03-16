@@ -29,7 +29,7 @@ export class TransformInterceptor implements NestInterceptor {
             `Method: ${req.method} | `,
             `HostName: ${req.hostname} | `,
             `Headers: ${req.Headers} | `,
-            `ResponseData: ${data} | `,
+            `ResponseData: ${JSON.stringify(data)} | `,
           ].join('');
           Logger.log(msg, TransformInterceptor.TAG);
         }

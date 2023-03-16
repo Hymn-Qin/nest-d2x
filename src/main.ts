@@ -11,7 +11,6 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
 import { TransformInterceptor } from './interceptor/transform.interceptor';
 import { ValidationPipe } from './pipes/validation.pipe';
-import { MyLogger } from './utils/logger';
 
 async function bootstrap() {
   const adapter = new FastifyAdapter();

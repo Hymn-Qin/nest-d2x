@@ -19,5 +19,13 @@
     "noFallthroughCasesInSwitch": false,
     "allowJs": true,
     "resolveJsonModule": true,
+    "paths": {
+      "@interfaces/*": [
+        "./src/interfaces/*"
+      ],
+      "@config*": [
+        "./src/config/*"
+      ]
+    }
   }
 }
